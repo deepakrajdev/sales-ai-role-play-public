@@ -1,0 +1,8 @@
+1. call for scores for personas (read and edit)
+2. for custimozation of personas values, slider to be given and also its call to be made.
+3. go with default (proceed)
+4. speech to text (voice enable to be done)
+5. "end and evaluate" to be changed in place of end call....
+6. end and evaluate handling
+7. better evulation with mistakes marked and better answers given
+8. admin level view for all sales emp with scorecards.
