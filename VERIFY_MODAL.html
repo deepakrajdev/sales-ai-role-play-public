@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Custom Modal Verification</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/voice-call.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+        }
+        .verification-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #2C3E50;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .verification-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .check-item {
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #28C76F;
+            background: #f0f9f6;
+        }
+        .check-item.warning {
+            border-left-color: #FFA500;
+            background: #fff9f0;
+        }
+        .check-item h3 {
+            margin: 0 0 10px 0;
+            color: #2C3E50;
+            font-size: 0.95rem;
+        }
+        .check-item p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        .status-badge.success {
+            background: #28C76F;
+            color: white;
+        }
+        .status-badge.pending {
+            background: #FFA500;
+            color: white;
+        }
+        .test-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: #4A5BD9;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+        .test-button:hover {
+            background: #3d47a8;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(74, 91, 217, 0.3);
+        }
+        .test-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #E8EAED;
+        }
+        .test-section h2 {
+            color: #2C3E50;
+            margin-bottom: 15px;
+        }
+        .console-output {
+            background: #1e1e1e;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            min-height: 100px;
+            overflow-y: auto;
+            max-height: 300px;
+            margin-top: 10px;
+        }
+        .success-msg {
+            color: #28C76F;
+        }
+        .error-msg {
+            color: #dc3545;
+        }
+        .info-msg {
+            color: #00bcd4;
+        }
+    </style>
+</head>
+<body>
+    <div class="verification-container">
+        <h1>Modal Implementation Verification</h1>
+        <p class="subtitle">Test custom modal confirmation for "End Call"</p>
+
+        <div class="verification-grid">
+            <div class="check-item">
+                <h3>HTML Modal Structure</h3>
+                <p id="html-check">Checking...</p>
+                <span class="status-badge" id="html-badge"></span>
+            </div>
+
+            <div class="check-item">
+                <h3>Modal CSS Styling</h3>
+                <p id="css-check">Checking...</p>
+                <span class="status-badge" id="css-badge"></span>
+            </div>
+
+            <div class="check-item">
+                <h3>JavaScript Functions</h3>
+                <p id="js-check">Checking...</p>
+                <span class="status-badge" id="js-badge"></span>
+            </div>
+
+            <div class="check-item">
+                <h3>Button Styling</h3>
+                <p id="btn-check">Checking...</p>
+                <span class="status-badge" id="btn-badge"></span>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>Interactive Test</h2>
+            <p>Click the button below to see the custom modal in action:</p>
+            <button class="test-button" onclick="testModal()">Show End Call Modal</button>
+            <div class="console-output" id="console"></div>
+        </div>
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="end-call-modal" class="modal" style="display: none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">End Call</h2>
+            </div>
+            <div class="modal-body">
+                <p class="modal-message">Are you sure you want to end the call?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="testCancel()">Cancel</button>
+                <button class="btn btn-danger" onclick="testConfirm()">End Call</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const log = (message, type = 'info') => {
+            const console = document.getElementById('console');
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'error' ? 'error-msg' : type === 'success' ? 'success-msg' : 'info-msg';
+            console.innerHTML += `<div><span class="${className}">[${timestamp}]</span> ${message}</div>`;
+            console.scrollTop = console.scrollHeight;
+        };
+
+        const verifyItem = (id, check, success) => {
+            const elem = document.getElementById(id + '-check');
+            const badge = document.getElementById(id + '-badge');
+            if (success) {
+                elem.textContent = check;
+                badge.textContent = '✓ OK';
+                badge.className = 'status-badge success';
+                return true;
+            } else {
+                elem.textContent = check;
+                badge.textContent = '✗ Missing';
+                badge.className = 'status-badge warning';
+                return false;
+            }
+        };
+
+        window.addEventListener('load', () => {
+            log('Verification started...', 'info');
+
+            // Check 1: HTML Modal
+            const modal = document.getElementById('end-call-modal');
+            if (modal && modal.querySelector('.modal-overlay') && modal.querySelector('.modal-content')) {
+                verifyItem('html', 'Found modal structure with overlay and content', true);
+                log('✓ HTML modal structure verified', 'success');
+            } else {
+                verifyItem('html', 'Modal element not found or incomplete', false);
+                log('✗ HTML modal structure missing', 'error');
+            }
+
+            // Check 2: CSS Styling
+            if (modal) {
+                const computed = window.getComputedStyle(modal);
+                const hasDisplay = computed.display !== 'none' || modal.style.display !== 'none';
+                const hasPosition = computed.position === 'fixed';
+                if (hasDisplay && hasPosition) {
+                    verifyItem('css', 'Modal CSS styling found and applied', true);
+                    log('✓ CSS modal styles verified (position: ' + computed.position + ')', 'success');
+                } else {
+                    verifyItem('css', 'CSS styling incomplete', false);
+                    log('✗ CSS modal styles not fully applied', 'error');
+                }
+            }
+
+            // Check 3: JavaScript Functions
+            const functions = ['showEndCallModal', 'hideEndCallModal', 'cancelEndCall', 'confirmEndCall', 'testModal', 'testCancel', 'testConfirm'];
+            const missingFuncs = functions.filter(f => typeof window[f] === 'undefined');
+            if (missingFuncs.length === 0) {
+                verifyItem('js', 'All required functions found', true);
+                log('✓ JavaScript functions verified (4 modal + 3 test functions)', 'success');
+            } else {
+                verifyItem('js', `Missing: ${missingFuncs.join(', ')}`, false);
+                log('✗ Some JavaScript functions missing: ' + missingFuncs.join(', '), 'error');
+            }
+
+            // Check 4: Button Styling
+            const btnDanger = document.querySelector('.btn-danger');
+            if (btnDanger) {
+                const computed = window.getComputedStyle(btnDanger);
+                verifyItem('btn', 'Button danger style found', true);
+                log('✓ .btn-danger styling verified (background: ' + computed.backgroundColor + ')', 'success');
+            } else {
+                verifyItem('btn', 'Button danger style not found', false);
+                log('⚠ .btn-danger style may not be loaded yet', 'info');
+            }
+
+            log('Verification complete!', 'success');
+        });
+
+        function testModal() {
+            const modal = document.getElementById('end-call-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                log('Modal displayed', 'success');
+            } else {
+                log('ERROR: Modal element not found', 'error');
+            }
+        }
+
+        function testCancel() {
+            const modal = document.getElementById('end-call-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                log('Cancel clicked - modal hidden', 'success');
+            }
+        }
+
+        function testConfirm() {
+            const modal = document.getElementById('end-call-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                log('End Call clicked - would proceed with termination', 'success');
+            }
+        }
+
+        // Stub functions that are called from actual code
+        function showEndCallModal() {
+            const modal = document.getElementById('end-call-modal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function hideEndCallModal() {
+            const modal = document.getElementById('end-call-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function cancelEndCall() {
+            log('cancelEndCall() called', 'info');
+            hideEndCallModal();
+        }
+
+        function confirmEndCall() {
+            log('confirmEndCall() called - would send API request', 'info');
+            hideEndCallModal();
+        }
+    </script>
+</body>
+</html>

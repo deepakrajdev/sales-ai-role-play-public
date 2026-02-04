@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Modal Confirmation Test</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/voice-call.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .instructions {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            color: #1565c0;
+        }
+        .test-button {
+            background: #4A5BD9;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 10px 0;
+        }
+        .test-button:hover {
+            background: #3d47a8;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Modal Confirmation Test</h1>
+        
+        <div class="instructions">
+            <strong>Instructions:</strong>
+            <p>Click the button below to trigger the custom modal. The modal should appear with a dimmed background overlay.</p>
+            <p>Test both buttons:</p>
+            <ul>
+                <li><strong>Cancel:</strong> Should close the modal and show a message</li>
+                <li><strong>End Call:</strong> Should close the modal and show a confirmation message</li>
+            </ul>
+        </div>
+
+        <button class="test-button" onclick="testShowModal()">Show End Call Modal</button>
+        <div id="status"></div>
+    </div>
+
+    <!-- Modal from index.html -->
+    <div id="end-call-modal" class="modal" style="display: none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">End Call</h2>
+            </div>
+            <div class="modal-body">
+                <p class="modal-message">Are you sure you want to end the call?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="testCancelEndCall()">Cancel</button>
+                <button class="btn btn-danger" onclick="testConfirmEndCall()">End Call</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function testShowModal() {
+            const modal = document.getElementById('end-call-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                updateStatus('Modal displayed', 'info');
+            } else {
+                updateStatus('ERROR: Modal element not found!', 'error');
+            }
+        }
+
+        function testCancelEndCall() {
+            const modal = document.getElementById('end-call-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                updateStatus('✓ Cancel button clicked - Modal closed', 'success');
+            }
+        }
+
+        function testConfirmEndCall() {
+            const modal = document.getElementById('end-call-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                updateStatus('✓ End Call button clicked - Modal closed (would proceed with ending call)', 'success');
+            }
+        }
+
+        function updateStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+        }
+
+        // Check if modal CSS is loaded
+        window.addEventListener('load', () => {
+            const modal = document.getElementById('end-call-modal');
+            const computed = window.getComputedStyle(modal);
+            console.log('Modal element found:', !!modal);
+            console.log('Modal display property:', computed.display);
+            console.log('Modal z-index:', computed.zIndex);
+        });
+    </script>
+</body>
+</html>

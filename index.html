@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice Training System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/voice-call.css">
+</head>
+
+<body>
+    <!-- HOME BUTTON (appears on all screens except home) -->
+    <button class="btn-home" id="home-btn" onclick="goHome()" style="display: none;">
+        Back
+    </button>
+
+    <div class="app-container">
+
+        <!-- HOME / PERSONA SELECTION -->
+        <section id="persona-selection" class="screen active">
+            <header class="app-header">
+                <div class="header-content">
+                    <h1 class="app-title">AI Voice Training System</h1>
+                    <p class="app-subtitle">Select your AI customer persona to begin voice training</p>
+                </div>
+            </header>
+
+            <main class="main-content">
+                <div class="persona-selector-container">
+                    <div class="avatar-display-card">
+                        <div class="animated-avatar" id="main-avatar">
+                            <span class="avatar-icon">P</span>
+                            <div class="avatar-pulse"></div>
+                        </div>
+                        <h2 class="avatar-name" id="avatar-name">Select a Persona</h2>
+                        <p class="avatar-desc" id="avatar-desc">Choose from the dropdown below to begin</p>
+                    </div>
+
+                    <div class="persona-dropdown-container">
+                        <label for="persona-dropdown" class="dropdown-label">Choose AI Persona</label>
+                        <select id="persona-dropdown" class="persona-dropdown" onchange="onPersonaSelect(this.value)">
+                            <option value="">-- Select Persona --</option>
+                            <option value="doctor">Doctor</option>
+                            <option value="hr_head">HR Head</option>
+                            <option value="lawyer">Lawyer</option>
+                            <option value="judge">Judge</option>
+                            <option value="police_officer">Police Officer</option>
+                            <option value="ias_officer">IAS Officer</option>
+                        </select>
+                    </div>
+                </div>
+            </main>
+        </section>
+
+        <!-- PERSONALITY PAGE -->
+        <section id="personality-page" class="screen">
+            <header class="app-header">
+                <div class="header-content">
+                    <h1 class="app-title">Customize Persona</h1>
+                    <p class="app-subtitle">Review and modify personality traits</p>
+                </div>
+            </header>
+
+            <main class="main-content">
+                <div class="personality-container">
+                    <div class="selected-avatar-section">
+                        <div class="animated-avatar large" id="personality-avatar">
+                            <span class="avatar-icon">D</span>
+                            <div class="avatar-pulse"></div>
+                        </div>
+                        <h2 id="personality-persona-name">Doctor</h2>
+                        <p class="persona-behavior" id="personality-behavior">Busy, practical, risk-aware</p>
+                    </div>
+
+                    <div class="traits-section">
+                        <h3>Personality Traits</h3>
+                        <div class="traits-display" id="traits-display"></div>
+                    </div>
+
+                    <div id="trait-editor" class="trait-editor">
+                        <h3 style="margin-bottom: 1.5rem;">Edit Personality Traits</h3>
+                        <div id="trait-controls"></div>
+                    </div>
+
+                    <div class="action-bar">
+                        <button class="btn btn-secondary" onclick="toggleTraitEditor()" id="edit-btn">
+                            Edit Behaviour
+                        </button>
+                        <button class="btn btn-primary btn-lg" onclick="goToStartCallPage()" id="start-training-btn">
+                            Continue
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </section>
+
+        <!-- START CALL PAGE (NEW) -->
+        <section id="start-call-page" class="screen">
+            <div class="start-call-container">
+                <div class="start-call-content">
+                    <div class="call-avatar-large" id="start-call-avatar">
+                        <span class="avatar-icon">D</span>
+                        <div class="avatar-pulse"></div>
+                    </div>
+
+                    <h1 id="start-call-persona-name">Doctor</h1>
+                    
+                    <div class="start-call-note">
+                        <p>You are pitching to a real-life customer. Press start to begin your practice conversation.</p>
+                    </div>
+
+                    <button class="btn-start-call" onclick="startVoiceCall()">
+                        <span>Start Call</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VOICE CALL (3-COLUMN LAYOUT - PROFESSIONAL) -->
+        <section id="voice-call" class="screen">
+            <!-- HOME BUTTON - TOP LEFT -->
+            <button class="voice-home-btn" id="voice-home-btn" onclick="goHome()" style="display: none;">
+                Home
+            </button>
+
+            <div class="voice-call-container">
+                <!-- LEFT SIDEBAR - SESSION INFO -->
+                <div class="voice-sidebar-left">
+                    <div class="session-info-card">
+                        <h3>Session Details</h3>
+                        
+                        <div class="info-row">
+                            <label>Policy:</label>
+                            <span id="call-policy-name" class="info-value">-</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <label>Customer:</label>
+                            <span id="call-customer-name" class="info-value">-</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <label>Duration:</label>
+                            <span id="call-duration" class="info-value">00:00</span>
+                        </div>
+
+                        <hr class="divider">
+
+                        <div class="info-section">
+                            <label>Customer Info</label>
+                            <div class="input-group">
+                                <input type="text" id="customer-name-input" placeholder="Customer Name" class="voice-input">
+                                <input type="text" id="customer-phone-input" placeholder="Phone Number" class="voice-input">
+                                <input type="email" id="customer-email-input" placeholder="Email" class="voice-input">
+                            </div>
+                        </div>
+
+                        <div class="info-section">
+                            <label>Policy Details</label>
+                            <textarea id="policy-notes-input" placeholder="Notes..." class="voice-textarea"></textarea>
+                        </div>
+
+                        <div class="info-section">
+                            <label>Call Status</label>
+                            <div class="status-badge" id="call-status-badge">
+                                <span id="call-status-text">Connecting...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CENTER - AVATAR & TOOLTIP -->
+                <div class="voice-center-main">
+                    <div class="voice-avatar-wrapper">
+                        <!-- Avatar -->
+                        <div class="voice-avatar" id="voice-avatar">
+                            <span id="avatar-icon">A</span>
+                        </div>
+
+                        <!-- Pulsing rings -->
+                        <div class="avatar-pulse-rings" id="avatar-pulse">
+                            <div class="pulse-ring"></div>
+                            <div class="pulse-ring"></div>
+                            <div class="pulse-ring"></div>
+                        </div>
+
+                        <!-- Customer Message Tooltip (from mouth) -->
+                        <div class="customer-message-tooltip" id="customer-tooltip">
+                            <div class="tooltip-arrow"></div>
+                            <div class="tooltip-content" id="tooltip-text">Listening...</div>
+                        </div>
+                    </div>
+
+                    <!-- Persona Name Below Avatar -->
+                    <h2 class="voice-persona-name" id="voice-persona-name">Customer</h2>
+
+                    <!-- Voice Controls -->
+                    <div class="voice-controls">
+                        <button class="voice-btn voice-btn-primary" id="speak-btn" onclick="toggleVoiceInput()" title="Click to start speaking">
+                            <span class="btn-label">Speak</span>
+                        </button>
+
+                        <button class="voice-btn voice-btn-danger" id="end-call-btn" onclick="endVoiceCall()" title="End the call and get evaluation">
+                            <span class="btn-label">End Call</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- RIGHT SIDEBAR - TRANSCRIPT -->
+                <div class="voice-sidebar-right">
+                    <div class="transcript-card">
+                        <div class="transcript-header">
+                            <h3>Messages</h3>
+                            <button class="transcript-close-btn" onclick="toggleTranscriptPanel()" title="Hide">×</button>
+                        </div>
+                        <div class="transcript-body" id="transcript-panel">
+                            <div id="transcript-messages" class="transcript-messages">
+                                <!-- Messages will be added here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EVALUATION -->
+        <section id="evaluation" class="screen">
+            <header class="app-header">
+                <div class="header-content">
+                    <h1 class="app-title">
+                        <span class="icon">📊</span>
+                        Training Evaluation
+                    </h1>
+                    <p class="app-subtitle">Your performance analysis and feedback</p>
+                </div>
+            </header>
+
+            <main class="main-content">
+                <div class="eval-header">
+                    <div class="overall-score">
+                        <span class="score-label">Overall Score</span>
+                        <span class="score-value" id="overall-score">78</span>
+                        <span class="score-suffix">/ 100</span>
+                    </div>
+                </div>
+
+                <div class="eval-grid">
+                    <div class="eval-section">
+                        <h3 class="eval-section-title">
+                            <span>~</span> Detailed Scores
+                        </h3>
+                        <div class="metric-row">
+                            <span class="metric-label">Product Explanation</span>
+                            <span class="metric-score" id="score-product">82</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Communication Skills</span>
+                            <span class="metric-score" id="score-communication">75</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Objection Handling</span>
+                            <span class="metric-score" id="score-objection">71</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Engagement</span>
+                            <span class="metric-score" id="score-engagement">84</span>
+                        </div>
+                    </div>
+
+                    <div class="eval-section">
+                        <h3 class="eval-section-title">
+                            <span>+</span> Key Strengths
+                        </h3>
+                        <ul class="feedback-list" id="strengths-list"></ul>
+                    </div>
+
+                    <div class="eval-section" style="grid-column: span 2;">
+                        <h3 class="eval-section-title">
+                            <span>*</span> Areas for Improvement
+                        </h3>
+                        <ul class="feedback-list" id="improvements-list"></ul>
+                    </div>
+
+                    <div class="eval-section transcript-section" style="grid-column: span 2;">
+                        <div class="transcript-section-header">
+                            <h3 class="eval-section-title">
+                                <span>-</span> Full Conversation Transcript
+                            </h3>
+                            <button class="btn btn-secondary btn-sm" onclick="downloadTranscript()">
+                                <span>↓</span> Download
+                            </button>
+                        </div>
+                        <div id="full-transcript"></div>
+                    </div>
+                </div>
+
+                <div class="action-bar" style="justify-content: center;">
+                    <button class="btn btn-primary btn-lg" onclick="startNewSession()">
+                        <span>🔄</span> Start New Session
+                    </button>
+                </div>
+            </main>
+        </section>
+
+    </div>
+
+    <!-- CUSTOM END CALL CONFIRMATION MODAL -->
+    <div id="end-call-modal" class="modal" style="display: none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">End Call</h2>
+            </div>
+            <div class="modal-body">
+                <p class="modal-message">Are you sure you want to end the call?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="cancelEndCall()">Cancel</button>
+                <button class="btn btn-danger" onclick="confirmEndCall()">End Call</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/personas.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/voice-call-simple.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
